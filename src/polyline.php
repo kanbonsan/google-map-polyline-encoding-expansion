@@ -124,6 +124,19 @@ class Polyline
     }
 
     /**
+     * トラックを反転させる
+     * 
+     * @param string $string Encoded string to extract points from.
+     * 
+     * @return string Encoded reversed string
+     */
+    final public static function reverse( $string ){
+        
+        return self::encode( self::decode( $string, true ), false );
+        
+    }
+    
+    /**
      * Reduce multi-dimensional to single list
      *
      * @param array $array Subject array to flatten.
