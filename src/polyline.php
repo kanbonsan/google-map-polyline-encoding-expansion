@@ -63,12 +63,14 @@ class Polyline
      *
      * @param array $points List of points to encode. Can be a list of tuples,
      *                      or a flat, one-dimensional array.
+     * @param boolean $reverse ポイントを逆向きにしてエンコード
      *
      * @return string encoded string
      */
-    final public static function encode( $points )
+    final public static function encode( $points, $reverse = false )
     {
-        $points = self::flatten($points);
+        $points = !$reverse ? self::flatten($points) : array_reverse( self::flatten($points));
+        
         $encodedString = '';
         $index = 0;
         $previous = array(0,0,0);
@@ -95,10 +97,11 @@ class Polyline
      * Reverse Google Polyline algorithm on encoded string.
      *
      * @param string $string Encoded string to extract points from.
-     *
+     * @param boolean $reverse 出力データを反転させる
+     * 
      * @return array points
      */
-    final public static function decode( $string )
+    final public static function decode( $string, $reverse = false )
     {
         $points = array();
         $index = $i = 0;
@@ -117,7 +120,7 @@ class Polyline
             $points[] = $number * 1 / pow(10, static::$precision[$index % 3]);
             $index++;
         }
-        return $points;
+        return !$reverse ? $points : array_reverse($points);
     }
 
     /**
