@@ -63,27 +63,24 @@ class Polyline
      *
      * @param array $points List of points to encode. Can be a list of tuples,
      *                      or a flat, one-dimensional array.
-     * @param boolean $reverse ポイントを逆向きにしてエンコード
-     *
      * @return string encoded string
      */
-    final public static function encode( $points, $reverse = false )
-    {
-        $points = !$reverse ? self::flatten($points) : array_reverse( self::flatten($points));
-        
+    final public static function encode($points) {
+        $points = self::flatten($points);
+
         $encodedString = '';
         $index = 0;
-        $previous = array(0,0,0);
-        foreach ( $points as $number ) {
-            $number = (float)($number);
-            $number = (int)round($number * pow(10, static::$precision[$index % 3]));
+        $previous = array(0, 0, 0);
+        foreach ($points as $number) {
+            $number = (float) ($number);
+            $number = (int) round($number * pow(10, static::$precision[$index % 3]));
             $diff = $number - $previous[$index % 3];
             $previous[$index % 3] = $number;
             $number = $diff;
             $index++;
             $number = ($number < 0) ? ~($number << 1) : ($number << 1);
             $chunk = '';
-            while ( $number >= 0x20 ) {
+            while ($number >= 0x20) {
                 $chunk .= chr((0x20 | ($number & 0x1f)) + 63);
                 $number >>= 5;
             }
@@ -97,15 +94,13 @@ class Polyline
      * Reverse Google Polyline algorithm on encoded string.
      *
      * @param string $string Encoded string to extract points from.
-     * @param boolean $reverse 出力データを反転させる
      * 
      * @return array points
      */
-    final public static function decode( $string, $reverse = false )
-    {
+    final public static function decode($string) {
         $points = array();
         $index = $i = 0;
-        $previous = array(0,0,0);
+        $previous = array(0, 0, 0);
         while ($i < strlen($string)) {
             $shift = $result = 0x00;
             do {
@@ -120,7 +115,7 @@ class Polyline
             $points[] = $number * 1 / pow(10, static::$precision[$index % 3]);
             $index++;
         }
-        return !$reverse ? $points : array_reverse($points);
+        return $points;
     }
 
     /**
@@ -130,12 +125,11 @@ class Polyline
      * 
      * @return string Encoded reversed string
      */
-    final public static function reverse( $string ){
-        
-        return self::encode( self::decode( $string, true ), false );
-        
+    final public static function reverse($string) {
+
+        return self::encode(self::pair(self::decode($string)));
     }
-    
+
     /**
      * Reduce multi-dimensional to single list
      *
