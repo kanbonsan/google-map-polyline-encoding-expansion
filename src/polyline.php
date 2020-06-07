@@ -127,7 +127,7 @@ class Polyline
      */
     final public static function reverse($string) {
 
-        return self::encode(self::pair(self::decode($string)));
+        return self::encode(array_reverse(self::pair(self::decode($string))));
     }
 
     /**
